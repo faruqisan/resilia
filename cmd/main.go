@@ -18,7 +18,7 @@ const (
 func main() {
 
 	// setup k8s
-	kubeEngine, err := kube.New("default")
+	kubeEngine, err := kube.New(kube.WithOutsideClusterConfig())
 	if err != nil {
 		log.Fatal(err)
 	}
