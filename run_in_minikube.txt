@@ -1,0 +1,16 @@
+mdplz k8s stg ver : v1.13.4
+
+# Start minikube
+minikube start
+
+# Set docker env
+eval $(minikube docker-env)
+
+# Build image
+docker build -t faruqisan/resilience_k8s:0.0.1 .
+
+# Run in minikube
+kubectl run resilience-k8s --image=faruqisan/resilience_k8s:0.0.1 --image-pull-policy=Never
+
+# Check that it's running
+kubectl get pods
