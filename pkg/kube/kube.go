@@ -28,6 +28,7 @@ type (
 		clientSet         *kubernetes.Clientset
 		deploymentsClient appstypev1.DeploymentInterface
 		servicesClient    corev1.ServiceInterface
+		daemonSetsClient  appstypev1.DaemonSetInterface
 	}
 )
 
@@ -85,13 +86,15 @@ func New(options ...Option) (*Engine, error) {
 	if err != nil {
 		return e, err
 	}
-
-	deploymentsClient := clientSet.AppsV1().Deployments(e.namespace)
-	servicesClient := clientSet.CoreV1().Services(e.namespace)
-
 	e.clientSet = clientSet
+
+	deploymentsClient := e.clientSet.AppsV1().Deployments(e.namespace)
+	servicesClient := e.clientSet.CoreV1().Services(e.namespace)
+	daemonSetsClient := e.clientSet.AppsV1().DaemonSets(e.namespace)
+
 	e.deploymentsClient = deploymentsClient
 	e.servicesClient = servicesClient
+	e.daemonSetsClient = daemonSetsClient
 
 	return e, nil
 }
