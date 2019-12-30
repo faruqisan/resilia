@@ -7,10 +7,10 @@ minikube start
 eval $(minikube docker-env)
 
 # Build image
-docker build -t faruqisan/resilience_k8s:0.0.1 .
+docker build -t faruqisan/resilia:0.0.1 .
 
 # Run in minikube
-kubectl run resilience-k8s --image=faruqisan/resilience_k8s:0.0.1 --image-pull-policy=Never
+kubectl run resilience-k8s --image=faruqisan/resilia:0.0.1 --image-pull-policy=Never
 
 # Check that it's running
 kubectl get pods

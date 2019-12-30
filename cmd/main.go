@@ -11,8 +11,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/faruqisan/resilience_k8s/pkg/kube"
-	"github.com/faruqisan/resilience_k8s/pumba"
+	"github.com/faruqisan/resilia/pkg/kube"
+	"github.com/faruqisan/resilia/pumba"
 )
 
 const (

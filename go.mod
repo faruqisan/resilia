@@ -1,4 +1,4 @@
-module github.com/faruqisan/resilience_k8s
+module github.com/faruqisan/resilia
 
 go 1.13
 

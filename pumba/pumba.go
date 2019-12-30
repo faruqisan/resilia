@@ -3,7 +3,7 @@ package pumba
 import (
 	"fmt"
 
-	"github.com/faruqisan/resilience_k8s/pkg/kube"
+	"github.com/faruqisan/resilia/pkg/kube"
 	"github.com/google/uuid"
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
