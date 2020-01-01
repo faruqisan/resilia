@@ -1,5 +1,14 @@
+run:
+	go run cmd/main.go
+
 deploy:
-	docker build -t faruqisan/resilia:0.0.1 .
+	kubectl apply -f files/k8s/deployment.yaml
+
+run_example:
+	go run example/main.go
+
+deploy_example:
+	docker build -f example_app.Dockerfile . -t faruqisan/resilia:0.0.1
 	kubectl run resilience-k8s --image=faruqisan/resilia:0.0.1 --image-pull-policy=Never
 
 cleanup:

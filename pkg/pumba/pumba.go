@@ -135,10 +135,15 @@ func (w *Worker) GetID() string {
 }
 
 // RunWorker function will run given worker on k8s cluster
-// and returning daemon name
+// and returning daemon set name
 func (e *Engine) RunWorker(worker Worker) (string, error) {
 	ds := e.createPumbaDaemonSet(worker)
-	return e.kubeEngine.CreateDaemonSet(ds)
+	_, err := e.kubeEngine.CreateDaemonSet(ds)
+	if err != nil {
+		return "", err
+	}
+
+	return ds.ObjectMeta.Name, nil
 }
 
 // CreatePumbaDaemonSet function will create k8s daemonset object
