@@ -5,7 +5,7 @@ deploy:
 	kubectl apply -f files/k8s/deployment.yaml
 
 run_example:
-	go run example/main.go
+	cd example && go run main.go
 
 deploy_example:
 	docker build -f example_app.Dockerfile . -t faruqisan/resilia:0.0.1

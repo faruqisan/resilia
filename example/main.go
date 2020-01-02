@@ -38,12 +38,12 @@ func main() {
 
 	// setup k8s
 	switch inCluster {
-	case inCluster:
+	case true:
 		kubeEngine, err = kube.New()
 		if err != nil {
 			log.Fatal(err)
 		}
-	case !inCluster:
+	case false:
 		kubeEngine, err = kube.New(kube.WithOutsideClusterConfig())
 		if err != nil {
 			log.Fatal(err)
@@ -130,57 +130,57 @@ func main() {
 		}
 	}
 
-	// spawn pumba!
-	pumbaEngine := pumba.New(kubeEngine)
-
-	// netem example
-	// create netem worker to hit 1 redis
-	// opt := pumbaEngine.NetEm(pumba.CommandNetEmLoss, pumba.NetEmOptions{
-	// 	TCImage:     "gaiadocker/iproute2",
-	// 	Duration:    "30s",
-	// 	LossPercent: "90",
-	// })
-
-	opt := pumbaEngine.Pause(pumba.PauseOptions{
-		Duration: "30s",
-	})
-
 	// get pods
 	// wait for pods spawned
-	var pods []string
+	var (
+		pods     []string
+		redisPod string
+	)
 	for {
 		pods, err = kubeEngine.GetPods()
 		if err != nil {
 			log.Println(err)
 		}
-		log.Println("pods : ", pods)
 
 		if len(pods) == 0 {
 			log.Println("no pods found, waiting ...")
 			time.Sleep(time.Second)
-		} else {
-			break
+			continue
 		}
+		// target redis pods
+		for _, pod := range pods {
+			// check if pod name contain redis
+			if strings.Contains(pod, "redis") {
+				redisPod = pod
+				break
+			}
+		}
+
+		if redisPod == "" {
+			continue
+		}
+
+		break
 	}
 
-	// select 1st pod
-	log.Println("targeting pods : ", pods[0])
-	// to test file deployment
-	// fData, err := ioutil.ReadFile(path.Join(exampleDaemonSetsPath, "pumba.yaml"))
+	log.Println("targeting pods : ", redisPod)
 
-	pauseWorker := pumbaEngine.NewPumbaWorker(pods[0], "1m", pumba.CommandPause, opt)
-	// netEmWorker, err := kubeEngine.LoadDaemonSetFromFile(fData)
+	// spawn pumba!
+	pumbaEngine := pumba.New(kubeEngine)
+	opt := pumbaEngine.Pause(pumba.PauseOptions{
+		Duration: "10s",
+	})
+
+	pauseWorker := pumbaEngine.NewPumbaWorker(pods[0], "20s", pumba.CommandPause, opt)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	dName, err := pumbaEngine.RunWorker(pauseWorker)
-	// dName, err := kubeEngine.CreateDaemonSet(netEmWorker)
 	if err != nil {
-		log.Println("fail to run pumba : ", err)
-	} else {
-		log.Printf("daemon set %s created", dName)
+		log.Fatal("fail to run pumba : ", err)
 	}
+	log.Printf("daemon set %s created", dName)
 
 	for {
 		select {
